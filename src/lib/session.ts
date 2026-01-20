@@ -1,10 +1,15 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+type DemoSession = {
+  user: {
+    email: string;
+    name?: string | null;
+  };
+};
 
-export async function requireSession() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    throw new Error("Unauthorized");
-  }
-  return session;
+export async function requireSession(): Promise<DemoSession> {
+  return {
+    user: {
+      email: "demo@local",
+      name: "Demo User",
+    },
+  };
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
 import type {
   BloodPressureEntry,
   DocumentEntry,
@@ -28,7 +27,6 @@ const today = new Date().toISOString().slice(0, 10);
 type NoticeTone = "" | "success" | "error";
 
 export default function Home() {
-  const { data: session, status } = useSession();
   const [notice, setNotice] = useState<{ message: string; tone: NoticeTone }>({
     message: "",
     tone: "",
@@ -117,10 +115,8 @@ export default function Home() {
   }, [notice]);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      loadAll();
-    }
-  }, [status, loadAll]);
+    loadAll();
+  }, [loadAll]);
 
   async function handleAddBp() {
     if (!bpForm.date || !bpForm.systolic || !bpForm.diastolic) {
@@ -285,39 +281,6 @@ export default function Home() {
     drawCharts();
   }, [drawCharts]);
 
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-[var(--sand-900)]">
-        Loading your space...
-      </div>
-    );
-  }
-
-  if (!session) {
-    return (
-    <div className="relative min-h-screen flex items-center justify-center px-6">
-      <div className="ambient" />
-      <div className="relative max-w-xl rounded-[32px] border border-[var(--stroke)] bg-[var(--card)] p-12 text-center shadow-[var(--shadow)] fade-in">
-
-          <p className="text-sm uppercase tracking-[0.32em] text-[var(--sand-700)]">
-            Wellness Atelier
-          </p>
-          <h1 className="mt-4 text-4xl leading-tight text-[var(--ink-900)]">
-            A calm ritual for tracking your body’s signals.
-          </h1>
-          <p className="mt-4 text-base text-[color:var(--sand-700)]">
-            Sign in with Google to securely store your entries in the cloud.
-          </p>
-          <button
-            className="mt-8 inline-flex items-center justify-center rounded-full bg-[var(--ink-900)] px-6 py-3 text-sm uppercase tracking-[0.24em] text-[var(--sand-50)] transition hover:opacity-90"
-            onClick={() => signIn("google")}
-          >
-            Continue with Google
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative min-h-screen px-6 pb-24 pt-16">
@@ -359,17 +322,11 @@ export default function Home() {
               >
                 Print report
               </button>
-              <button
-                className="rounded-full bg-[var(--ink-900)] px-4 py-2 text-xs uppercase tracking-[0.2em] text-[var(--sand-50)]"
-                onClick={() => signOut()}
-              >
-                Sign out
-              </button>
             </div>
           </div>
           <div className="flex flex-wrap gap-3 rounded-3xl border border-[var(--stroke)] bg-[var(--card)] p-4 text-xs uppercase tracking-[0.25em] text-[var(--sand-700)]">
-            <span>Cloud saved</span>
-            <span>Google secure</span>
+            <span>Local demo</span>
+            <span>No sign-in</span>
             <span>Warm pastel UI</span>
           </div>
           {notice.message && (
